@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>无聊早安生成器</title>
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+
+<body>
+    <div id="app" class="content">
+        <el-card shadow="always">
+            <el-form :model="form">
+                <el-form-item label="选择你所在的城市">
+                    <el-select v-model="form.city" placeholder="请选择城市">
+                        <el-option value="北京"></el-option>
+                        <el-option value="上海"></el-option>
+                        <el-option value="广州"></el-option>
+                        <el-option value="深圳"></el-option>
+                        <el-option value="成都"></el-option>
+                        <el-option value="沈阳"></el-option>
+                        <el-option value="武汉"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="你买的彩票">
+                </el-form-item>
+                <div v-for="(item,index) in form.lottery" :key="index">
+                    <el-col :span="11">
+                        <el-select v-model="item.kind">
+                            <el-option value="ssq">双色球</el-option>
+                            <el-option value="fcsd">福彩3D</el-option>
+                            <el-option value="dlt">大乐透</el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :span="11">
+                        <el-input v-model="item.content" placeholder="输入号码，以逗号分隔。特殊号码放在后面。例如：01,02,03,04,05,06,11">
+                        </el-input>
+                    </el-col>
+
+                </div>
+                <el-button @click="form.lottery.push({'kind':'',content:''})">添加一串</el-button>
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
+        <el-dialog title="创建成功" :visible.sync="dialogVisible" width="30%">
+            <span>请记住你的用户id：{{this.userId}}</span>
+            <img src="data:image/png;base64,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" />
+            <span>用相机扫描上述二维码添加快捷指令，在提示中输入上述用户id，就可以辣！</span>
+            <span slot="footer">
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://unpkg.com/axios@0.21.1/dist/axios.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                form: {
+                    city: "北京",
+                    lottery: []
+                },
+                cityList: [
+                    { index: 0, value: "北京" }
+                ],
+                dialogVisible: false,
+                userId: ""
+            }
+        },
+        methods: {
+            onSubmit() {
+                axios.post("/user", this.form).then(res => {
+                    this.userId = res.data.data
+                    this.dialogVisible = true
+                })
+            }
+        }
+    })
+</script>
+
+<style>
+    .content {
+        width: 80%;
+        margin: 100px;
+    }
+</style>
+
+</html>
