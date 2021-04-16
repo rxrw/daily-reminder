@@ -10,7 +10,7 @@ docker-build-master:
   before_script:
     - docker login -u "$ALIYUN_DOCKER_USERNAME" -p "$ALIYUN_DOCKER_PASSWORD" $ALIYUN_DOCKER_URL
   script:
-    - docker build --pull -t "$ALIYUN_DOCKER_URL/$CI_REGISTRY_IMAGE" .
-    - docker push "$ALIYUN_DOCKER_URL/$CI_REGISTRY_IMAGE"
+    - docker build --pull -t "$ALIYUN_DOCKER_URL/$CI_PROJECT_PATH" .
+    - docker push "$ALIYUN_DOCKER_URL/$CI_PROJECT_PATH"
   only:
     - master
