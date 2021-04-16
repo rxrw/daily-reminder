@@ -3,7 +3,7 @@ docker-build-master:
   image: docker:latest
   stage: build
   tags:
-    - docker
+    - shell
     - opti
   services:
     - docker:dind
