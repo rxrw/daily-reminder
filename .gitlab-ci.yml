@@ -11,6 +11,8 @@
   script:
     - docker build --pull -t "$ALIYUN_DOCKER_URL/$CI_PROJECT_PATH" .
     - docker push "$ALIYUN_DOCKER_URL/$CI_PROJECT_PATH"
+  after_script:
+    - docker rmi -f $ALIYUN_DOCKER_URL/$CI_PROJECT_PATH
   only:
     - master
 
