@@ -2,6 +2,9 @@ docker-build-master:
   # Official docker image.
   image: docker:latest
   stage: build
+  tags:
+    - docker
+    - opti
   services:
     - docker:dind
   before_script:
