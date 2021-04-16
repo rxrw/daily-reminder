@@ -29,10 +29,7 @@
     - echo "${SSH_HOST_KEY}" > /etc/ssh/ssh_known_hosts
   script:
     - ssh-add ~/.ssh/id_rsa
-    - ssh $SSH_USER@$SSH_HOST
-    - cd /home/i/docker/qr.iuv520.com
-    - docker-compose pull
-    - docker-compose up -d
+    - ssh $SSH_USER@$SSH_HOST "cd /home/i/docker/qr.iuv520.com && docker-compose pull && docker-compose up -d"
   environment:
     name: production
     url: https://dr.iuv520.com
