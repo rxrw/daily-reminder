@@ -1,5 +1,4 @@
-docker-build-master:
-  # Official docker image.
+编译docker镜像:
   image: docker:latest
   stage: build
   tags:
@@ -14,3 +13,26 @@ docker-build-master:
     - docker push "$ALIYUN_DOCKER_URL/$CI_PROJECT_PATH"
   only:
     - master
+
+部署到阿里云:
+  stage: deploy
+  tags:
+    - docker
+  image: alpine
+  before_script:
+    - apk update && apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+    - chmod 400 ~/.ssh/id_rsa
+    - echo "${SSH_HOST_KEY}" > /etc/ssh/ssh_known_hosts
+  script:
+    - ssh-add ~/.ssh/id_rsa
+    - ssh $SSH_USER@$SSH_HOST
+    - cd /home/i/docker/qr.iuv520.com
+    - docker-compose pull
+    - docker-compose up -d
+  environment:
+    name: production
+    url: https://dr.iuv520.com
