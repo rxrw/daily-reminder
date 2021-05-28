@@ -5,6 +5,7 @@ import (
 	"iuv520/daily-reminder/orm"
 	"iuv520/daily-reminder/services"
 	"log"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -133,7 +134,8 @@ func (u *User) GetReportBy(userID string) *JSONResponse {
 			}
 		}
 		if lotteryTotal == 0 {
-			finalWord = append(finalWord, fmt.Sprintf("有关彩票，又没中奖，习惯就好。"))
+			nozhong := []string{"彩票又没中奖", "有关彩票，与你无关", "彩票什么的，接着做梦吧", "别说500万了，5块都没有中"}
+			finalWord = append(finalWord, fmt.Sprintf("%s。", nozhong[rand.Int()/len(nozhong)]))
 		} else {
 			finalWord = append(finalWord, fmt.Sprintf("昨晚的彩票你一共中了%d元，其中，%s。记得兑奖哦。你也只配中这点了吧。", lotteryTotal, strings.Join(eachLottery, "，")))
 		}
@@ -165,6 +167,10 @@ func (u *User) translateLottery(name string) string {
 		return "福彩3D"
 	case "dlt":
 		return "大乐透"
+	case "plw":
+		return "排列五"
+	case "pls":
+		return "排列三"
 	default:
 		return "其它"
 	}

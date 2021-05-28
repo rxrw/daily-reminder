@@ -47,6 +47,10 @@ func NewLottery(correct string, current string, name string) ILottery {
 		return &DltLottery{lottery: &Lottery{correct: correct, current: current}}
 	case "fcsd":
 		return &FcsdLottery{lottery: &Lottery{correct: correct, current: current}}
+	case "plw":
+		return &PlwLottery{lottery: &Lottery{correct: correct, current: current}}
+	case "pls":
+		return &PlwLottery{lottery: &Lottery{correct: correct, current: current}}
 	}
 	return nil
 }
@@ -66,15 +70,25 @@ type DltLottery struct {
 	lottery *Lottery
 }
 
+//排列5
+type PlwLottery struct {
+	lottery *Lottery
+}
+
+//排列3
+type PlsLottery struct {
+	lottery *Lottery
+}
+
 //AmIWin int
 func (s *SsqLottery) AmIWin() int {
 	//最后一位是篮球 拿出来
 	current := strings.Split(s.lottery.current, ",")
 	currentBlue, _ := strconv.Atoi(current[len(current)-1])
-	current = append(current[:len(current)-1])
+	current = current[:len(current)-1]
 	correct := strings.Split(s.lottery.correct, ",")
 	correctBlue, _ := strconv.Atoi(correct[len(correct)-1])
-	correct = append(correct[:len(correct)-1])
+	correct = correct[:len(correct)-1]
 	sameNum := s.lottery.sameNum(correct, current)
 	var level int
 	if currentBlue != correctBlue {
@@ -129,13 +143,29 @@ func (s *FcsdLottery) AmIWin() int {
 }
 
 //AmIWin int
+func (s *PlwLottery) AmIWin() int {
+	if s.lottery.correct == s.lottery.current {
+		return 100000
+	}
+	return 0
+}
+
+//AmIWin int
+func (s *PlsLottery) AmIWin() int {
+	if s.lottery.correct == s.lottery.current {
+		return 1040
+	}
+	return 0
+}
+
+//AmIWin int
 func (s *DltLottery) AmIWin() int {
 	current := strings.Split(s.lottery.current, ",")
-	currentBlue := append(current[len(current)-2:])
-	current = append(current[:len(current)-2])
+	currentBlue := current[len(current)-2:]
+	current = current[:len(current)-2]
 	correct := strings.Split(s.lottery.correct, ",")
-	correctBlue := append(correct[len(correct)-2:])
-	correct = append(correct[:len(correct)-2])
+	correctBlue := correct[len(correct)-2:]
+	correct = correct[:len(correct)-2]
 	sameNum := s.lottery.sameNum(current, correct)
 	sameBlue := s.lottery.sameNum(currentBlue, correctBlue) //蓝球相同数量
 	var level int
@@ -143,13 +173,10 @@ func (s *DltLottery) AmIWin() int {
 		switch sameNum {
 		case 3:
 			level = 9
-			break
 		case 4:
 			level = 7
-			break
 		case 5:
 			level = 3
-			break
 		default:
 			level = 0
 		}
@@ -157,16 +184,12 @@ func (s *DltLottery) AmIWin() int {
 		switch sameNum {
 		case 2:
 			level = 9
-			break
 		case 3:
 			level = 8
-			break
 		case 4:
 			level = 5
-			break
 		case 5:
 			level = 2
-			break
 		default:
 			level = 0
 		}
@@ -175,19 +198,14 @@ func (s *DltLottery) AmIWin() int {
 		case 0:
 		case 1:
 			level = 9
-			break
 		case 2:
 			level = 8
-			break
 		case 3:
 			level = 6
-			break
 		case 4:
 			level = 4
-			break
 		case 5:
 			level = 1
-			break
 		default:
 			level = 0
 		}
