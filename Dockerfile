@@ -15,10 +15,14 @@ ENV MYSQL_1_PORT 3306
 ENV MYSQL_1_USER user
 ENV TZ Asia/Shanghai
 
-ADD . .
+ADD go.mod .
+
+ADD go.sum .
 
 RUN go env -w GO111MODULE=on && \
     go env -w GOPROXY=https://goproxy.io,direct
+
+ADD . .
 
 RUN go build main.go
 
