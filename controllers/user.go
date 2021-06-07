@@ -47,7 +47,17 @@ func (u *User) Post(ctx iris.Context) *JSONResponse {
 func (u *User) GetLotteryBy(userID string) *JSONResponse {
 	calculator := &services.Calculator{}
 
-	res, err := calculator.Run(userID)
+	res, typeNumbers, err := calculator.Run(userID)
+
+	result := make(map[string]map[string]interface{})
+
+	for key, value := range res {
+		wuhu := make(map[string]interface{})
+		wuhu["amount"] = value
+		wuhu["numbers"] = typeNumbers[key]
+		result[key] = wuhu
+	}
+
 	if err != nil {
 		return &JSONResponse{
 			Code: 500,
@@ -58,7 +68,7 @@ func (u *User) GetLotteryBy(userID string) *JSONResponse {
 	return &JSONResponse{
 		Code: 200,
 		Msg:  "success",
-		Data: res,
+		Data: result,
 	}
 }
 
@@ -130,24 +140,24 @@ func (u *User) GetReportBy(userID string) *JSONResponse {
 
 			lotteryTotal += v
 			if v != 0 {
-				eachLottery = append(eachLottery, fmt.Sprintf("%s中了%d元，", u.translateLottery(k), v))
+				eachLottery = append(eachLottery, fmt.Sprintf("%s中了%d元", u.translateLottery(k), v))
 			}
 		}
 		if lotteryTotal == 0 {
 			nozhong := []string{"彩票又没中奖", "有关彩票，与你无关", "彩票什么的，接着做梦吧", "别说500万了，5块都没有中"}
-			finalWord = append(finalWord, fmt.Sprintf("%s。", nozhong[rand.Int()/len(nozhong)]))
+			finalWord = append(finalWord, fmt.Sprintf("%s。", nozhong[rand.Int()%len(nozhong)]))
 		} else {
-			finalWord = append(finalWord, fmt.Sprintf("昨晚的彩票你一共中了%d元，其中，%s。记得兑奖哦。你也只配中这点了吧。", lotteryTotal, strings.Join(eachLottery, "，")))
+			finalWord = append(finalWord, fmt.Sprintf("昨晚的彩票你一共中了%d元。其中，%s。记得兑奖哦。你也只配中这点了吧。", lotteryTotal, strings.Join(eachLottery, "，")))
 		}
 	}
 
 	// 天气系列
 
 	if weather != nil {
-		finalWord = append(finalWord, fmt.Sprintf("今天%s的气温是%.0f摄氏度，%s%s。空气质量指数%d。", weather.City, weather.Temperature, weather.Direction, weather.Power, weather.Aqi))
+		finalWord = append(finalWord, fmt.Sprintf("当前%s的气温是%.0f摄氏度，%s%s。空气质量指数%d。", weather.City, weather.Temperature, weather.Direction, weather.Power, weather.Aqi))
 	}
 	// 热搜系列
-	finalHotWord := "此刻微博热搜：" + strings.Join(hotSearch, "；") + "。"
+	finalHotWord := "最近微博热搜：" + strings.Join(hotSearch, "；") + "。"
 
 	finalWord = append(finalWord, finalHotWord)
 
