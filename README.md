@@ -16,4 +16,8 @@
 
 hahaha
 
-已经有ui了
+## docker下运行
+
+按照dockerfile中的定义 生成环境变量
+
+直接build即可
